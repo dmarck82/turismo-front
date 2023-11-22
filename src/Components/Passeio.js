@@ -38,9 +38,9 @@ class Passeio extends React.Component{
     buscarPasseios = () => {
         fetch("http://localhost.com:8080/passeio", {
             method: 'GET',
-            headers: {'Content-Type':'application/json'},
+            headers: {'Content-Type':'application/json', 'Authorization': 'Bearer '+this.token}
         })
-        .then(resposta => resposta.json)
+        .then(resposta => resposta.json())
         .then(dados => this.setState({ passeios : dados }))
     }
 
@@ -48,7 +48,7 @@ class Passeio extends React.Component{
 
         fetch("http://localhost.com:8080/Passeio",{
             method: 'POST',
-            headers: {'Content-Type':'application/json'},
+            headers: {'Content-Type':'application/json', 'Authorization': 'Bearer '+this.token},
             body: JSON.stringify(passeio)
         })
         .then(resposta => {
@@ -64,7 +64,7 @@ class Passeio extends React.Component{
 
         fetch("http://localhost.com:8080/Passeio/"+id, {
             method: 'GET',
-            headers: {'Content-Type':'application/json'}        
+            headers: {'Content-Type':'application/json', 'Authorization': 'Bearer '+this.token},
             })
         .then(resposta => resposta.json)
         .then(passeio => {
@@ -87,7 +87,7 @@ class Passeio extends React.Component{
 
         fetch("http://localhost.com:8080/Passeio/"+passeio.id,{
             method: 'PUT',
-            headers: {'Content-Type':'application/json'},
+            headers: {'Content-Type':'application/json', 'Authorization': 'Bearer '+this.token},
             body: JSON.stringify(passeio)
         })
         .then(resposta => {
@@ -103,7 +103,7 @@ class Passeio extends React.Component{
 
         fetch("http://localhost.com:8080/passeio/"+id, {
             method: 'DELETE',
-            headers: {'Content-Type':'application/json'}        
+            headers: {'Content-Type':'application/json', 'Authorization': 'Bearer '+this.token},
             })
         .then(resposta => {
             if(resposta.ok){
@@ -173,15 +173,15 @@ class Passeio extends React.Component{
 
                 <Modal.Body>
                     <form id="cadastro">
-                        <div class="mb-3">
-                            <label class="form-label">Destino</label>
-                            <input type="text" class="form-control" value={this.state.destino} onChange={this.atualizarDestino}></input>
+                        <div className="mb-3">
+                            <label className="form-label">Destino</label>
+                            <input type="text" className="form-control" value={this.state.destino} onChange={this.atualizarDestino}></input>
                             <br />
-                            <label class="form-label">Itinerario</label>
-                            <input type="text" class="form-control" value={this.state.itinerario} onChange={this.atualizarItinerario}></input>
+                            <label className="form-label">Itinerario</label>
+                            <input type="text" className="form-control" value={this.state.itinerario} onChange={this.atualizarItinerario}></input>
                             <br />
-                            <label class="form-label">Preço</label>
-                            <input type="number" class="form-control" value={this.state.preco} onChange={this.atualizarPreco}></input>
+                            <label className="form-label">Preço</label>
+                            <input type="number" className="form-control" value={this.state.preco} onChange={this.atualizarPreco}></input>
                         </div>
                     </form>
                 </Modal.Body>
@@ -245,8 +245,8 @@ class Passeio extends React.Component{
         
     render = () =>{
         return(
-            <div class="tabelaPasseios">
-                <Button class="bt" variant="primary" onClick={this.abrirModal}>Adicionar passeio</Button>
+            <div className="tabelaPasseios">
+                <Button className="bt" variant="primary" onClick={this.abrirModal}>Adicionar passeio</Button>
                 <br />
                 <br />
                 {this.renderForm()}
