@@ -22,11 +22,14 @@ const Auth = () => {
 
   return (
     <div>
+      <h2>Bem vindo</h2>
+      <p>Utilize essa página para realizar o seu login. Para cadastro utilize a aba pessoas.</p>
       <input type="text" placeholder="Usuário" onChange={(e) => setUsername(e.target.value)} />
       <br></br>
       <input type="password" placeholder="Senha" onChange={(e) => setPassword(e.target.value)} />
       <br></br>
       <button onClick={handleLogin}>Login</button>
+      <button variant="primary" >Cadastrar</button>
     </div>
   );
 };
