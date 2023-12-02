@@ -128,7 +128,7 @@ class Passeio extends React.Component {
 
     renderTabela = () => {
         const listaPasseios = this.state.passeios.map((passeio) =>
-            <tr key={passeio.id}>
+        <tr key={passeio.id}>
                 <td>{passeio.destino}</td>
                 <td>{passeio.itinerario}</td>
                 <td>{passeio.preco}</td>
