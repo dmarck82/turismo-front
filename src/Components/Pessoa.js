@@ -39,7 +39,6 @@ class Pessoa extends React.Component{
     }
 
     componentDidMount(){
-        console.log("componentDidMount")
         this.buscarPessoas();
     }
 
@@ -73,10 +72,6 @@ class Pessoa extends React.Component{
             });
     };
     
-    
-    
-
-
     cadastrarPessoa = (pessoa) => {
         
         axios.post('http://localhost:8080/pessoa', pessoa, {
@@ -118,7 +113,6 @@ class Pessoa extends React.Component{
         });
 
     }
-    
 
     atualizarPessoa = (pessoa) => {
 
@@ -137,8 +131,7 @@ class Pessoa extends React.Component{
             alert('Erro na requisição. Verifique o console para mais detalhes.');
         });
 
-}
-
+    }
 
     deletarPessoa = (id) => {
 
@@ -159,12 +152,10 @@ class Pessoa extends React.Component{
 
     }
 
-
-
     renderTabela = () => {
 
         const listaPessoas = this.state.pessoas.map((pessoa) =>
-            <tr>
+            <tr key={pessoa.id}>
                 <td>{pessoa.nome}</td>
                 <td>{pessoa.email}</td>
                 <td>{pessoa.telefone}</td>
@@ -178,7 +169,6 @@ class Pessoa extends React.Component{
                 </td>
             </tr>  
         )
-
 
         return (
             <Table striped bordered hover>
@@ -227,7 +217,6 @@ class Pessoa extends React.Component{
         this.buscarPessoas(id);
       }
     
-
     renderForm = () => {
         return(
             <Modal show={this.state.modalAberta} onHide={this.fecharModal}>
@@ -336,9 +325,7 @@ class Pessoa extends React.Component{
             { mostraTabela: false }
         )
     }
-   
-    
-        
+
     render = () => { 
         return(
             <div className="tabelaPessoas">

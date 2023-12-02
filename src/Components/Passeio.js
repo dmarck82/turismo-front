@@ -1,19 +1,20 @@
+import axios from "axios";
 import React from "react";
 import { Button, Table, Modal } from "react-bootstrap";
 
-
-class Passeio extends React.Component{
-
-    constructor(props){
+class Passeio extends React.Component {
+    constructor(props) {
         super(props);
 
-        this.state={
+        this.state = {
             id: 0,
-            destino : '',
-            itinerario : '',
-            preco : '',
+            destino: '',
+            itinerario: '',
+            preco: '',
+            modalAberta: false,
+            mostrarTabela: true,
             passeios: []
-        }
+        };
 
         this.deletarPasseio = this.deletarPasseio.bind(this);
         this.buscarPasseios = this.buscarPasseios.bind(this);
@@ -25,100 +26,109 @@ class Passeio extends React.Component{
         this.fecharModal = this.fecharModal.bind(this);
         this.abrirModal = this.abrirModal.bind(this);
 
+        this.token = localStorage.getItem("token");
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.buscarPasseios();
     }
 
-    componentWillUnmount(){
-
-    }
+    componentWillUnmount() {}
 
     buscarPasseios = () => {
-        fetch("http://localhost.com:8080/passeio", {
-            method: 'GET',
-            headers: {'Content-Type':'application/json', 'Authorization': 'Bearer '+this.token}
-        })
-        .then(resposta => resposta.json())
-        .then(dados => this.setState({ passeios : dados }))
+        axios.get('http://localhost:8080/passeio', { headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.token } })
+            .then(res => this.setState({ passeios: res.data }));
     }
+
+    buscarPasseio = (id) => {
+        axios.get(`http://localhost:8080/passeio/${id}`)
+            .then(response => {
+                const data = response.data;
+                this.setState({
+                    id: data.id,
+                    destino: data.destino,
+                    itinerario: data.itinerario,
+                    preco: data.preco
+                });
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
+    };
 
     cadastrarPasseio = (passeio) => {
-
-        fetch("http://localhost.com:8080/Passeio",{
-            method: 'POST',
-            headers: {'Content-Type':'application/json', 'Authorization': 'Bearer '+this.token},
-            body: JSON.stringify(passeio)
+        axios.post('http://localhost:8080/passeio', passeio, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.token }
         })
-        .then(resposta => {
-            if(resposta.ok){
-                this.buscarPasseios();
-            }else{
-                alert('Não foi possível adicionar o passeio!');
-            }
-        })
+            .then(resposta => {
+                if (resposta.status >= 200 && resposta.status < 300) {
+                    this.buscarPasseios();
+                } else {
+                    alert('Não foi possível adicionar o passeio!');
+                }
+            })
+            .catch(erro => {
+                console.error('Erro ao cadastrar passeio:', erro);
+                alert('Erro ao cadastrar o passeio. Verifique o console para mais detalhes.');
+            });
     }
 
-    carregarDados = (id) =>{
-
-        fetch("http://localhost.com:8080/Passeio/"+id, {
-            method: 'GET',
-            headers: {'Content-Type':'application/json', 'Authorization': 'Bearer '+this.token},
-            })
-        .then(resposta => resposta.json)
-        .then(passeio => {
-            this.setState(
-                {
-                    id: passeio.id,
-                    destino : passeio.destino,
-                    itinerario : passeio.itinerario,
-                    preco : passeio.preco
-                }
-            )
-        this.abrirModal();
+    carregarDados = (id) => {
+        axios.get(`http://localhost:8080/passeio/${id}`, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.token }
         })
-        .catch(error => {
-            console.error("Erro na requisição:", error);
-        });
+            .then(resposta => {
+                const passeio = resposta.data;
+                this.setState({
+                    id: passeio.id,
+                    destino: passeio.destino,
+                    itinerario: passeio.itinerario,
+                    preco: passeio.preco
+                });
+                this.abrirModal();
+            })
+            .catch(error => {
+                console.error("Erro na requisição:", error);
+            });
     }
 
     atualizarPasseio = (passeio) => {
-
-        fetch("http://localhost.com:8080/Passeio/"+passeio.id,{
-            method: 'PUT',
-            headers: {'Content-Type':'application/json', 'Authorization': 'Bearer '+this.token},
-            body: JSON.stringify(passeio)
+        axios.put(`http://localhost:8080/passeio/${passeio.id}`, passeio, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.token }
         })
-        .then(resposta => {
-            if(resposta.ok){
-                this.buscarPasseios();
-            }else{
-                alert('Não foi possível atualizar o passeio!');
-            }
-        })
-    }
-
-    deletarPasseio = (id) =>{
-
-        fetch("http://localhost.com:8080/passeio/"+id, {
-            method: 'DELETE',
-            headers: {'Content-Type':'application/json', 'Authorization': 'Bearer '+this.token},
+            .then(resposta => {
+                if (resposta.status >= 200 && resposta.status < 300) {
+                    this.buscarPasseios();
+                } else {
+                    alert('Não foi possível atualizar o passeio!');
+                }
             })
-        .then(resposta => {
-            if(resposta.ok){
-                this.buscarPasseios();
-            }else{
-                alert('Passeio não foi excluída');
-            }
-        })
+            .catch(error => {
+                console.error("Erro na requisição:", error);
+                alert('Erro na requisição. Verifique o console para mais detalhes.');
+            });
     }
 
+    deletarPasseio = (id) => {
+        axios.delete(`http://localhost:8080/passeio/${id}`, {
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.token }
+        })
+            .then(resposta => {
+                if (resposta.status >= 200 && resposta.status < 300) {
+                    this.buscarPasseios();
+                } else {
+                    alert('Passeio não foi excluído');
+                }
+            })
+            .catch(error => {
+                console.error("Erro na requisição:", error);
+                alert('Erro na requisição. Verifique o console para mais detalhes.');
+            });
+    }
 
-    renderTabela (){
-
+    renderTabela = () => {
         const listaPasseios = this.state.passeios.map((passeio) =>
-            <tr>
+            <tr key={passeio.id}>
                 <td>{passeio.destino}</td>
                 <td>{passeio.itinerario}</td>
                 <td>{passeio.preco}</td>
@@ -128,17 +138,17 @@ class Passeio extends React.Component{
                         <Button variant="link" onClick={() => this.deletarPasseio(passeio.id)}>Excluir</Button>
                     </div>
                 </td>
-            </tr>  
-        );
-
+            </tr>
+        )
 
         return (
             <Table striped bordered hover>
                 <thead>
                     <tr>
                         <th>Destino</th>
-                        <th>Itinerario</th>
+                        <th>Itinerário</th>
                         <th>Preço</th>
+                        <th>Opções</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -154,7 +164,7 @@ class Passeio extends React.Component{
             id: 0,
             destino: "",
             itinerario: "",
-            preco : ""
+            preco: ""
         })
     }
 
@@ -164,8 +174,17 @@ class Passeio extends React.Component{
         })
     }
 
-    renderForm (){
-        return(
+    abrirModalAtualizar(id) {
+        this.setState({
+            id: id,
+            modalAberta: true
+        });
+
+        this.buscarPasseio(id);
+    }
+
+    renderForm = () => {
+        return (
             <Modal show={this.state.modalAberta} onHide={this.fecharModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Preencha os dados do passeio</Modal.Title>
@@ -177,11 +196,11 @@ class Passeio extends React.Component{
                             <label className="form-label">Destino</label>
                             <input type="text" className="form-control" value={this.state.destino} onChange={this.atualizarDestino}></input>
                             <br />
-                            <label className="form-label">Itinerario</label>
+                            <label className="form-label">Itinerário</label>
                             <input type="text" className="form-control" value={this.state.itinerario} onChange={this.atualizarItinerario}></input>
                             <br />
                             <label className="form-label">Preço</label>
-                            <input type="number" className="form-control" value={this.state.preco} onChange={this.atualizarPreco}></input>
+                            <input type="text" className="form-control" value={this.state.preco} onChange={this.atualizarPreco}></input>
                         </div>
                     </form>
                 </Modal.Body>
@@ -191,7 +210,7 @@ class Passeio extends React.Component{
                     <Button variant="secondary" onClick={this.fecharModal}>Cancelar</Button>
                 </Modal.Footer>
             </Modal>
-            );
+        );
     }
 
     atualizarDestino = (e) => {
@@ -213,38 +232,37 @@ class Passeio extends React.Component{
     }
 
     submit = () => {
-
         const passeio = {
             id: this.state.id,
             destino: this.state.destino,
             itinerario: this.state.itinerario,
-            preco : this.state.preco
+            preco: this.state.preco
         }
 
-        if(this.state.id == 0){
+        if (this.state.id === 0) {
             this.cadastrarPasseio(passeio);
-        }else{
+        } else {
             this.atualizarPasseio(passeio);
         }
         this.fecharModal();
+
+        console.log(passeio)
     }
 
     mostraTabela = () => {
         this.setState({
-            mostraTabela: true
+            mostrarTabela: true
         })
     }
 
     mostraLista = () => {
         this.setState(
-            { mostraTabela: false }
+            { mostrarTabela: false }
         )
     }
-   
-    
-        
-    render = () =>{
-        return(
+
+    render = () => {
+        return (
             <div className="tabelaPasseios">
                 <Button className="bt" variant="primary" onClick={this.abrirModal}>Adicionar passeio</Button>
                 <br />

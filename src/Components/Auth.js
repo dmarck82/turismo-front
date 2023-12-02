@@ -29,7 +29,6 @@ const Auth = () => {
       <input type="password" placeholder="Senha" onChange={(e) => setPassword(e.target.value)} />
       <br></br>
       <button onClick={handleLogin}>Login</button>
-      <button variant="primary" >Cadastrar</button>
     </div>
   );
 };
