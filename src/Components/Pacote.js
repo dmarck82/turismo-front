@@ -58,6 +58,8 @@ class Pacote extends React.Component {
     };
 
     cadastrarPacote = (pacote) => {
+        console.log("Inserir pacote: ");
+        console.log(pacote);
         axios.post('http://localhost:8080/pacote', pacote, {
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.token }
         })
@@ -70,6 +72,7 @@ class Pacote extends React.Component {
             })
             .catch(erro => {
                 console.error('Erro ao cadastrar pacote:', erro);
+                console.log(erro); 
                 alert('Erro ao cadastrar o pacote. Verifique o console para mais detalhes.');
             });
     }
